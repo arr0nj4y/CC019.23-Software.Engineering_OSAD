@@ -7,22 +7,29 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+// --- Type Definition ---
+// The user_level is added to the form's type definition.
 type RegisterForm = {
     name: string;
     email: string;
     password: string;
     password_confirmation: string;
+    user_level: string; // Added this field for the user role
 };
 
 export default function Register() {
+    // The useForm hook from Inertia is used to manage the form state.
+    // The user_level is set to 'student' by default.
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
+        user_level: 'student', // Set the default role here
     });
 
     useEffect(() => {
+        // This effect cleans up the password fields if the component is unmounted.
         return () => {
             reset('password', 'password_confirmation');
         };
@@ -30,6 +37,8 @@ export default function Register() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        // The post helper from useForm will send all the data, including
+        // user_level, to the 'register' route on your Laravel backend.
         post(route('register'));
     };
 
@@ -72,7 +81,7 @@ export default function Register() {
                                     autoComplete="name"
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
-                                    placeholder="e.g., John Doe"
+                                    placeholder="e.g., Juan Dela Cruz"
                                     className="mt-1 block w-full rounded-md border border-gray-300 p-2 placeholder-gray-400
                                                text-gray-900
                                                transition-all duration-300 ease-in-out

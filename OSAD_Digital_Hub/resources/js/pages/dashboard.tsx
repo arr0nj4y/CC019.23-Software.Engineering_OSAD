@@ -1,35 +1,42 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import AuthenticatedLayout from '@/layouts/authenticatedlayout';
 import { Head } from '@inertiajs/react';
+import { type User } from '@/types';
+import SummaryCards from '@/components/summarycards';
+import FacilityBookings from '@/components/facilitybookings';
+import AnalyticsCharts from '@/components/analyticscharts';
+import DashboardCalendar from '@/components/dashboardcalendar'; // Import the new component
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-];
+// Define the props for the page
+interface DashboardProps {
+    auth: {
+        user: User;
+    };
+}
 
-export default function Dashboard() {
+export default function Dashboard({ auth }: DashboardProps) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AuthenticatedLayout user={auth.user}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+
+            {/* Main content area for the dashboard */}
+            <div className="flex flex-col gap-6">
+                {/* 1. Summary cards at the top */}
+                <SummaryCards />
+
+                {/* 2. Two-column layout for the main content */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left column (takes up 2/3 of the space on large screens) */}
+                    <div className="lg:col-span-2 flex flex-col gap-6">
+                        <FacilityBookings />
+                        <DashboardCalendar />
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+
+                    {/* Right column (takes up 1/3 of the space on large screens) */}
+                    <div className="lg:col-span-1">
+                        <AnalyticsCharts />
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                 </div>
             </div>
-        </AppLayout>
+        </AuthenticatedLayout>
     );
 }
