@@ -50,7 +50,7 @@ export default function Register() {
                     {/* Left Column: Logo and Title */}
                     <div className="hidden w-1/2 flex-col items-center justify-center bg-white p-10 md:flex">
                         <img
-                            src="/path/to/your/uic-logo.png" // Replace with the correct path to your logo
+                            src="/uic-logo.png" 
                             alt="University of the Immaculate Conception Logo"
                             className="h-48 w-48 object-contain"
                         />
