@@ -6,7 +6,7 @@ use App\Http\Controllers\OrganizationManagementController;
 use App\Http\Controllers\ActivityRequestController;
 use App\Http\Controllers\ConsentManagementController;
 use App\Http\Controllers\ActivityReportsController;
-use App\Http\Controllers\OrganizationApplicationController; // <-- Add this line
+use App\Http\Controllers\OrganizationApplicationController;
 
 // The root URL will now render your login page.
 Route::get('/', function () {
@@ -24,24 +24,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    // --- PROTECTED ROUTES ---
+    // --- PROTECTED ROUTES (Updated with String Roles) ---
     
-    // EXAMPLE 1: Only Directors (2) and Admins (3) can access this.
+    // This route is now protected by role NAME instead of number.
     Route::get('organization-management', [OrganizationManagementController::class, 'index'])
-        ->middleware('role:2,3') // <-- Role protection added
+        ->middleware('role:OSAD Director,VP of Academics') // <-- FIX
         ->name('organization-management');
         
-    // Assuming the following routes also need similar protection
     Route::get('organization-management/activity-requests', [ActivityRequestController::class, 'index'])
-        ->middleware('role:1,2,3') // Example: Admin Assistants and up
+        ->middleware('role:Admin Assistant,OSAD Director,VP of Academics') // <-- FIX
         ->name('activity-requests');
         
     Route::get('organization-management/consent-management', [ConsentManagementController::class, 'index'])
-        ->middleware('role:1,2,3') // Example: Admin Assistants and up
+        ->middleware('role:Admin Assistant,OSAD Director,VP of Academics') // <-- FIX
         ->name('consent-management');
 
     Route::get('organization-management/activity-reports', [ActivityReportsController::class, 'index'])
-        ->middleware('role:1,2,3') // Example: Admin Assistants and up
+        ->middleware('role:Admin Assistant,OSAD Director,VP of Academics') // <-- FIX
         ->name('activity-reports');
 
     // --- ROUTES FOR STUDENT APPLICATIONS ---
@@ -52,3 +51,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Ensure these files exist and contain your authentication and settings routes.
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+

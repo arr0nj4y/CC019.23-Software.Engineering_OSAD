@@ -16,41 +16,41 @@ class AuthenticatedSessionController extends Controller
     /**
      * Show the login page.
      */
-    public function create(Request $request): Response
+    public function create(): Response
     {
-        // Renders the login page component
         return Inertia::render('auth/login', [
             'canResetPassword' => Route::has('password.request'),
-            'status' => $request->session()->get('status'),
+            'status' => session('status'),
         ]);
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Handle login.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // This validates the user's credentials and logs them in.
         $request->authenticate();
-
-        // Regenerates the session for security.
         $request->session()->regenerate();
 
-        // Redirects the user to the dashboard after a successful login.
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**
-     * Destroy an authenticated session.
+     * Handle logout.
      */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
 
+        // Invalidate and regenerate session
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // Explicitly clear cookies in the browser
+        return redirect()
+            ->route('login')
+            ->with('status', 'You have been logged out.')
+            ->withCookie(cookie()->forget('laravel_session'))
+            ->withCookie(cookie()->forget('XSRF-TOKEN'));
     }
 }
-

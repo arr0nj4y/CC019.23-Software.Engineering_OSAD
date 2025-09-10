@@ -1,34 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // --- Reusable Status Badge Component ---
 interface StatusBadgeProps {
-    status: 'Pending' | 'Approved' | 'Rejected';
+    status: "Pending" | "Approved" | "Rejected";
 }
 
 const StatusBadge = ({ status }: StatusBadgeProps) => {
     const statusStyles = {
-        Pending: 'bg-yellow-100 text-yellow-800',
-        Approved: 'bg-green-100 text-green-800',
-        Rejected: 'bg-red-100 text-red-800',
+        Pending: "bg-yellow-100 text-yellow-800",
+        Approved: "bg-green-100 text-green-800",
+        Rejected: "bg-red-100 text-red-800",
     };
 
     return (
-        <span className={`px-3 py-1 text-sm font-medium rounded-full ${statusStyles[status]}`}>
+        <span
+            className={`px-3 py-1 text-sm font-medium rounded-full ${statusStyles[status]}`}
+        >
             {status}
         </span>
     );
 };
 
-
 // --- Main Facility Bookings Component ---
 const FacilityBookings = () => {
-    const [activeFilter, setActiveFilter] = useState('Day');
+    const [activeFilter, setActiveFilter] = useState("Day");
 
     // This data would typically come from your Laravel backend
     const bookings = [
-        { id: 1, room: 'Lab 3', purpose: 'Research', duration: '4 Hours', status: 'Pending' as const },
-        { id: 2, room: 'Room 301', purpose: 'Team Meeting', duration: '2 Hours', status: 'Approved' as const },
-        { id: 3, room: 'Room 205', purpose: 'Study Group', duration: '1.5 Hours', status: 'Rejected' as const },
+        {
+            id: 1,
+            room: "Lab 3",
+            purpose: "Research",
+            duration: "4 Hours",
+            status: "Pending" as const,
+        },
+        {
+            id: 2,
+            room: "Room 301",
+            purpose: "Team Meeting",
+            duration: "2 Hours",
+            status: "Approved" as const,
+        },
+        {
+            id: 3,
+            room: "Room 205",
+            purpose: "Study Group",
+            duration: "1.5 Hours",
+            status: "Rejected" as const,
+        },
     ];
 
     return (
@@ -37,14 +57,14 @@ const FacilityBookings = () => {
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-800">Facility Bookings</h2>
                 <div className="flex items-center bg-gray-100 p-1 rounded-lg">
-                    {['Week', 'Month', 'Day'].map((filter) => (
+                    {["Week", "Month", "Day"].map((filter) => (
                         <button
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
                             className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors duration-200 ${
                                 activeFilter === filter
-                                    ? 'bg-white text-gray-800 shadow-sm'
-                                    : 'bg-transparent text-gray-500 hover:text-gray-700'
+                                    ? "bg-white text-gray-800 shadow-sm"
+                                    : "bg-transparent text-gray-500 hover:text-gray-700"
                             }`}
                         >
                             {filter}
@@ -55,26 +75,49 @@ const FacilityBookings = () => {
 
             {/* Bookings Table */}
             <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="w-full table-fixed border-collapse">
                     <thead>
                         <tr className="border-b border-gray-200">
-                            <th className="py-3 px-2 text-sm font-semibold text-gray-500">Room</th>
-                            <th className="py-3 px-2 text-sm font-semibold text-gray-500">Purpose</th>
-                            <th className="py-3 px-2 text-sm font-semibold text-gray-500">Duration</th>
-                            <th className="py-3 px-2 text-sm font-semibold text-gray-500">Status</th>
+                            <th className="w-1/4 py-3 px-2 text-sm font-semibold text-gray-500 text-left">
+                                Room
+                            </th>
+                            <th className="w-1/4 py-3 px-2 text-sm font-semibold text-gray-500 text-left">
+                                Purpose
+                            </th>
+                            <th className="w-1/4 py-3 px-2 text-sm font-semibold text-gray-500 text-left">
+                                Duration
+                            </th>
+                            <th className="w-1/4 py-3 px-2 text-sm font-semibold text-gray-500 text-center">
+                                Status
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {bookings.map((booking) => (
-                            <tr key={booking.id} className="border-b border-gray-200 last:border-b-0">
-                                <td className="py-4 px-2 font-bold text-gray-800">{booking.room}</td>
-                                <td className="py-4 px-2 text-gray-600">{booking.purpose}</td>
-                                <td className="py-4 px-2 text-gray-600">{booking.duration}</td>
-                                <td className="py-4 px-2">
-                                    <StatusBadge status={booking.status} />
-                                </td>
-                            </tr>
-                        ))}
+                        <AnimatePresence>
+                            {bookings.map((booking, i) => (
+                                <motion.tr
+                                    key={booking.id}
+                                    className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                                >
+                                    <td className="py-4 px-2 font-bold text-gray-800 text-left">
+                                        {booking.room}
+                                    </td>
+                                    <td className="py-4 px-2 text-gray-600 text-left">
+                                        {booking.purpose}
+                                    </td>
+                                    <td className="py-4 px-2 text-gray-600 text-left">
+                                        {booking.duration}
+                                    </td>
+                                    <td className="py-4 px-2 text-center">
+                                        <StatusBadge status={booking.status} />
+                                    </td>
+                                </motion.tr>
+                            ))}
+                        </AnimatePresence>
                     </tbody>
                 </table>
             </div>
