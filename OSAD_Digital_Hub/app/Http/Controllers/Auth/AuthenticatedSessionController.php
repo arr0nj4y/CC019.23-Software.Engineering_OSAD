@@ -18,7 +18,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(Request $request): Response
     {
-        // Corrected: 'Auth/Login' (capital A, capital L)
+        // Renders the login page component
         return Inertia::render('auth/login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => $request->session()->get('status'),
@@ -30,10 +30,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // This validates the user's credentials and logs them in.
         $request->authenticate();
 
+        // Regenerates the session for security.
         $request->session()->regenerate();
 
+        // Redirects the user to the dashboard after a successful login.
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -50,3 +53,4 @@ class AuthenticatedSessionController extends Controller
         return redirect('/');
     }
 }
+

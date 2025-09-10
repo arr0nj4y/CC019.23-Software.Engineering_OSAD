@@ -39,12 +39,20 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        // Get the user once at the top
+        $user = $request->user();
+
+        // Eager-load the organization relationship if the user is logged in
+        if ($user) {
+            $user->load('organizations');
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user, // Pass the user object (with organizations loaded)
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
@@ -54,3 +62,4 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 }
+

@@ -16,10 +16,11 @@ use Inertia\Response;
 class RegisteredUserController extends Controller
 {
     /**
-     * Show the registration page.
+     * Display the registration view.
      */
     public function create(): Response
     {
+        // This now correctly points to your lowercase folder structure
         return Inertia::render('auth/register');
     }
 
@@ -32,20 +33,24 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'user_school_id' => 'required|string|max:255|unique:'.User::class,
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'user_school_id' => $request->user_school_id,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'user_role' => 'Student', // <-- This now sets the default role as a string
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect(route('dashboard', absolute: false));
     }
 }
+

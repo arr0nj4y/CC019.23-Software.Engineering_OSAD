@@ -6,6 +6,7 @@ use App\Http\Controllers\OrganizationManagementController;
 use App\Http\Controllers\ActivityRequestController;
 use App\Http\Controllers\ConsentManagementController;
 use App\Http\Controllers\ActivityReportsController;
+use App\Http\Controllers\OrganizationApplicationController; // <-- Add this line
 
 // The root URL will now render your login page.
 Route::get('/', function () {
@@ -42,6 +43,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('organization-management/activity-reports', [ActivityReportsController::class, 'index'])
         ->middleware('role:1,2,3') // Example: Admin Assistants and up
         ->name('activity-reports');
+
+    // --- ROUTES FOR STUDENT APPLICATIONS ---
+    Route::get('/apply-for-role', [OrganizationApplicationController::class, 'create'])->name('applications.create');
+    Route::post('/apply-for-role', [OrganizationApplicationController::class, 'store'])->name('applications.store');
 });
 
 // Ensure these files exist and contain your authentication and settings routes.

@@ -1,6 +1,8 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler, useEffect } from 'react';
+import { motion } from 'framer-motion';
+
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
@@ -8,67 +10,119 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 // --- Type Definition ---
-// The user_level is added to the form's type definition.
 type RegisterForm = {
     name: string;
     email: string;
     password: string;
     password_confirmation: string;
-    user_level: string; // Added this field for the user role
+    user_level: string;
+    user_school_id: string;
 };
 
 export default function Register() {
-    // The useForm hook from Inertia is used to manage the form state.
-    // The user_level is set to 'student' by default.
-    const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-        user_level: 'student', // Set the default role here
-    });
+    const { data, setData, post, processing, errors, reset } =
+        useForm<Required<RegisterForm>>({
+            name: '',
+            email: '',
+            password: '',
+            password_confirmation: '',
+            user_level: 'student',
+            user_school_id: '',
+        });
 
+    // Reset password fields on unmount
     useEffect(() => {
-        // This effect cleans up the password fields if the component is unmounted.
         return () => {
             reset('password', 'password_confirmation');
         };
     }, []);
 
+    // Auto-extract School ID from email
+    useEffect(() => {
+        const match = data.email.match(/_(\d+)@/);
+        const schoolId = match ? match[1] : '';
+        setData('user_school_id', schoolId);
+    }, [data.email]);
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        // The post helper from useForm will send all the data, including
-        // user_level, to the 'register' route on your Laravel backend.
         post(route('register'));
     };
 
     return (
         <>
             <Head title="Register" />
-            <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4 sm:p-6 lg:p-8">
-                <div className="flex w-full max-w-5xl overflow-hidden rounded-lg bg-white shadow-xl">
-                    {/* Left Column: Logo and Title */}
-                    <div className="hidden w-1/2 flex-col items-center justify-center bg-white p-10 md:flex">
-                        <img
-                            src="/uic-logo.png" 
+            <motion.div
+                className="flex min-h-screen items-center justify-center bg-gray-100 p-4 sm:p-6 lg:p-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6 }}
+            >
+                <motion.div
+                    className="flex w-full max-w-5xl overflow-hidden rounded-lg bg-white shadow-xl"
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                >
+                    {/* Left Column */}
+                    <motion.div
+                        className="hidden w-1/2 flex-col items-center justify-center bg-white p-10 md:flex"
+                        initial={{ x: -50, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.6 }}
+                    >
+                        <motion.img
+                            src="/uic-logo.png"
                             alt="University of the Immaculate Conception Logo"
                             className="h-48 w-48 object-contain"
+                            whileHover={{ scale: 1.05, rotate: 2 }}
+                            transition={{ type: 'spring', stiffness: 300 }}
                         />
-                        <h1 className="mt-8 text-center text-xl font-bold text-gray-800">OSAD Digital Hub</h1>
-                        <p className="mt-2 text-center text-sm text-gray-600">
+                        <motion.h1
+                            className="mt-8 text-center text-xl font-bold text-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4, duration: 0.5 }}
+                        >
+                            OSAD Digital Hub
+                        </motion.h1>
+                        <motion.p
+                            className="mt-2 text-center text-sm text-gray-600"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.6, duration: 0.5 }}
+                        >
                             Empowering Student Organizations Through Digital Compliance
-                        </p>
-                    </div>
+                        </motion.p>
+                    </motion.div>
 
-                    {/* Right Column: Registration Form */}
+                    {/* Right Column */}
                     <div className="w-full p-8 md:w-1/2 md:p-16">
-                        <h2 className="text-3xl font-bold text-gray-900">Create an account</h2>
-                        <p className="mt-2 text-gray-600">
+                        <motion.h2
+                            className="text-3xl font-bold text-gray-900"
+                            initial={{ opacity: 0, x: 40 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2, duration: 0.5 }}
+                        >
+                            Create an account
+                        </motion.h2>
+                        <motion.p
+                            className="mt-2 text-gray-600"
+                            initial={{ opacity: 0, x: 40 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3, duration: 0.5 }}
+                        >
                             Fill in your details below to create a new account.
-                        </p>
+                        </motion.p>
 
-                        <form className="mt-8 space-y-6" onSubmit={submit}>
-                            {/* Name Input Field */}
+                        <motion.form
+                            className="mt-8 space-y-6"
+                            onSubmit={submit}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4, duration: 0.6 }}
+                        >
+                            {/* Full Name */}
                             <div>
                                 <Label htmlFor="name" className="font-semibold text-gray-700">
                                     Full Name
@@ -82,15 +136,12 @@ export default function Register() {
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
                                     placeholder="e.g., Juan Dela Cruz"
-                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 placeholder-gray-400
-                                               text-gray-900
-                                               transition-all duration-300 ease-in-out
-                                               focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 placeholder-gray-400 text-gray-900 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
                                 />
                                 <InputError message={errors.name} className="mt-2" />
                             </div>
 
-                            {/* Email Input Field */}
+                            {/* Email */}
                             <div>
                                 <Label htmlFor="email" className="font-semibold text-gray-700">
                                     Email Address
@@ -102,16 +153,29 @@ export default function Register() {
                                     autoComplete="email"
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
-                                    placeholder="e.g., yourname@uic.edu.ph"
-                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 placeholder-gray-400
-                                               text-gray-900
-                                               transition-all duration-300 ease-in-out
-                                               focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                    placeholder="e.g., ajamora_230000001865@uic.edu.ph"
+                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 placeholder-gray-400 text-gray-900 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
                                 />
                                 <InputError message={errors.email} className="mt-2" />
                             </div>
 
-                            {/* Password Input Field */}
+                            {/* School ID (auto-extracted, readonly) */}
+                            <div>
+                                <Label htmlFor="user_school_id" className="font-semibold text-gray-700">
+                                    School ID
+                                </Label>
+                                <Input
+                                    id="user_school_id"
+                                    type="text"
+                                    value={data.user_school_id}
+                                    readOnly
+                                    placeholder="Automatically extracted from email"
+                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 bg-gray-100 text-gray-900 cursor-not-allowed"
+                                />
+                                <InputError message={errors.user_school_id} className="mt-2" />
+                            </div>
+
+                            {/* Password */}
                             <div>
                                 <Label htmlFor="password" className="font-semibold text-gray-700">
                                     Password
@@ -124,15 +188,12 @@ export default function Register() {
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
                                     placeholder="Enter your password"
-                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 placeholder-gray-400
-                                               text-gray-900
-                                               transition-all duration-300 ease-in-out
-                                               focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 placeholder-gray-400 text-gray-900 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
                                 />
                                 <InputError message={errors.password} className="mt-2" />
                             </div>
 
-                            {/* Confirm Password Input Field */}
+                            {/* Confirm Password */}
                             <div>
                                 <Label htmlFor="password_confirmation" className="font-semibold text-gray-700">
                                     Confirm Password
@@ -143,12 +204,11 @@ export default function Register() {
                                     required
                                     autoComplete="new-password"
                                     value={data.password_confirmation}
-                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('password_confirmation', e.target.value)
+                                    }
                                     placeholder="Confirm your password"
-                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 placeholder-gray-400
-                                               text-gray-900
-                                               transition-all duration-300 ease-in-out
-                                               focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 placeholder-gray-400 text-gray-900 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
                                 />
                                 <InputError message={errors.password_confirmation} className="mt-2" />
                             </div>
@@ -168,10 +228,10 @@ export default function Register() {
                                     Log in
                                 </TextLink>
                             </div>
-                        </form>
+                        </motion.form>
                     </div>
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
         </>
     );
 }
