@@ -72,7 +72,7 @@ export default function Register() {
                         transition={{ delay: 0.2, duration: 0.6 }}
                     >
                         <motion.img
-                            src="/uic-logo.png"
+                            src="/uic_image.png"
                             alt="University of the Immaculate Conception Logo"
                             className="h-48 w-48 object-contain"
                             whileHover={{ scale: 1.05, rotate: 2 }}

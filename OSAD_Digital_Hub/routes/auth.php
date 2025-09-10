@@ -52,13 +52,5 @@ Route::middleware('auth')->group(function () {
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store'])
         ->middleware('throttle:6,1');
 
-    // 🔑 Secure logout (only POST actually logs out)
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
-
-    // 🚦 Fallback: visiting /logout directly by GET just redirects
-    Route::get('logout', function () {
-        return redirect()->route('login')
-            ->with('status', 'You have been logged out. Please log in again.');
-    });
+    
 });

@@ -29,9 +29,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Authenticate and regenerate session
         $request->authenticate();
         $request->session()->regenerate();
 
+        // Redirect to the dashboard or intended page
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -40,16 +42,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Logs the user out
         Auth::guard('web')->logout();
 
-        // Invalidate and regenerate session
+        // Invalidate and regenerate session for security
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Explicitly clear cookies in the browser
+        // Redirect to login page with optional status message
         return redirect()
             ->route('login')
-            ->with('status', 'You have been logged out.')
             ->withCookie(cookie()->forget('laravel_session'))
             ->withCookie(cookie()->forget('XSRF-TOKEN'));
     }

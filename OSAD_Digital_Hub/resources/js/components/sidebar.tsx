@@ -31,7 +31,7 @@ const Sidebar = ({ user }: { user: User }) => {
   const allNavLinks = [
     { name: 'Dashboard', icon: HomeIcon, href: '/dashboard', allowedRoles: ['Student', 'Admin Assistant', 'OSAD Director', 'VP of Academics'] },
     { name: 'Apply for Role', icon: LockOpenIcon, href: '/apply-for-role', allowedRoles: ['Student'] },
-    // ... other links
+    // ... add other links as needed
   ];
 
   const accessibleLinks = allNavLinks.filter(link =>
@@ -49,8 +49,6 @@ const Sidebar = ({ user }: { user: User }) => {
     }
     return user.user_role as string;
   };
-
-  // The `handleLogout` function is no longer needed with the <Link> component.
 
   return (
     <div className="flex flex-col h-screen w-64 bg-[#C83B51] text-white font-sans">
@@ -86,17 +84,13 @@ const Sidebar = ({ user }: { user: User }) => {
         </ul>
       </nav>
 
-      {/* --- FIX --- 
-          Replaced the <button> with an Inertia <Link> component.
-          - `method="post"` tells Inertia to send a POST request.
-          - `as="button"` makes it behave like a button for accessibility while maintaining the link's functionality.
-          This is the idiomatic and recommended way to handle logout actions.
-      */}
+      {/* Logout */}
       <div className="p-4 mb-4">
         <Link
           href="/logout"
           method="post"
           as="button"
+          preserveState={false}
           className="flex items-center p-3 w-full text-left rounded-lg transition-colors duration-200 hover:bg-[#B03448] hover:bg-opacity-50"
         >
           <LogoutIcon className="w-6 h-6 mr-4" />
